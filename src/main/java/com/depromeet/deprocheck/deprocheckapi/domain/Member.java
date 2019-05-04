@@ -6,7 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "Member")
@@ -44,11 +44,11 @@ public class Member {
      * 생성 시간
      */
     @CreatedDate
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     /**
      * 갱신 시간
      */
     @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private ZonedDateTime updatedAt;
 }
