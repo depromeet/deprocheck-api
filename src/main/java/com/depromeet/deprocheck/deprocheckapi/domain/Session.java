@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "Session")
 @Data
 @EntityListeners(AuditingEntityListener.class)
 public class Session {

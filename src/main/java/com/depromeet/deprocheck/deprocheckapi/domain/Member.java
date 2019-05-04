@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "Member")
 @Data
 @EntityListeners(AuditingEntityListener.class)
 public class Member {
