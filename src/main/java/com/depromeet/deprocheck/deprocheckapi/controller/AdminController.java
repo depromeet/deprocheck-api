@@ -41,9 +41,9 @@ public class AdminController {
      */
     @PostMapping("/login")
     public String login(@RequestBody LoginRequest loginRequest,
-                        HttpServletRequest httpServletRequest) {
+                        HttpServletRequest request) {
         // 로그인되어있으면 지나가기
-        HttpSession httpSession = httpServletRequest.getSession(false);
+        HttpSession httpSession = request.getSession(false);
         if (httpSession != null) {
             httpSession.getAttribute("name");
         }
@@ -53,7 +53,7 @@ public class AdminController {
                 Authority.ADMIN
         );
         Member member = loginService.login(loginValue);
-        httpSession = httpServletRequest.getSession(true);
+        httpSession = request.getSession(true);
         httpSession.setAttribute("id", member.getId());
         httpSession.setAttribute("name", member.getName());
         return member.getName();
