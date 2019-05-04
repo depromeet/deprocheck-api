@@ -28,6 +28,9 @@ import java.util.stream.Collectors;
 /**
  * 관리자가 사용할 수 있는 api 입니다
  */
+@CrossOrigin(origins = {
+        "http://localhost:3000"
+})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
