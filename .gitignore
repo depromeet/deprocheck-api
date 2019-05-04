@@ -134,7 +134,11 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Maven
+target/
+
 # Properties
+application-local.properties
 application-dev.properties
 application-real.properties
 
