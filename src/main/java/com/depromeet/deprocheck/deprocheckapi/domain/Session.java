@@ -43,20 +43,24 @@ public class Session {
     /**
      * 시작 시간
      */
+    @Column(name = "from_at")
     private ZonedDateTime fromAt;
     /**
      * 끝나는 시간
      */
+    @Column(name = "to_at")
     private ZonedDateTime toAt;
     /**
      * 생성 시간
      */
     @CreatedDate
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
     /**
      * 갱신 시간
      */
     @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @OneToMany

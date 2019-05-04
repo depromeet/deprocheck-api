@@ -26,6 +26,7 @@ public class Member {
     /**
      * 기수
      */
+    @Column(name = "term_number")
     private Integer termNumber;
 
     /**
@@ -38,17 +39,20 @@ public class Member {
      * 직군
      */
     @Enumerated(EnumType.STRING)
+    @Column(name = "job_group")
     private JobGroup jobGroup;
 
     /**
      * 생성 시간
      */
     @CreatedDate
+    @Column(name = "created_at")
     private ZonedDateTime createdAt;
 
     /**
      * 갱신 시간
      */
     @LastModifiedDate
+    @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 }
