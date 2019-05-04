@@ -5,6 +5,7 @@ import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
 import com.depromeet.deprocheck.deprocheckapi.exception.BadRequestException;
 import com.depromeet.deprocheck.deprocheckapi.exception.ForbiddenException;
+import com.depromeet.deprocheck.deprocheckapi.exception.NoContentException;
 import com.depromeet.deprocheck.deprocheckapi.repository.AttendanceRepository;
 import com.depromeet.deprocheck.deprocheckapi.service.AttendanceService;
 import com.depromeet.deprocheck.deprocheckapi.service.MemberService;
@@ -19,7 +20,7 @@ import org.springframework.util.Assert;
 @Service
 @RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService {
-    public static final int MAX_DISTANCE = 500;
+    private static final int MAX_DISTANCE = 500;
     private final SessionService sessionService;
     private final MemberService memberService;
     private final AttendanceRepository attendanceRepository;
@@ -50,9 +51,14 @@ public class AttendanceServiceImpl implements AttendanceService {
         Member member = memberService.getMemberById(memberId);
 
         // 출석 정보 생성
-        Attendance attendance = new Attendance();
-        attendance.setSession(session);
-        attendance.setMember(member);
-        return attendanceRepository.save(attendance);
+        Attendance attendance = attendanceRepository.findByMemberIdAndSessionId(member.getId(), session.getId()).orElse(null);
+        if (attendance != null) {
+            throw new NoContentException();
+        }
+
+        Attendance newAttendance = new Attendance();
+        newAttendance.setSession(session);
+        newAttendance.setMember(member);
+        return attendanceRepository.save(newAttendance);
     }
 }

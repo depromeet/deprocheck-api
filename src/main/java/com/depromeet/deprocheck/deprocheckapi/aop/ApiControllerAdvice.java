@@ -1,9 +1,6 @@
 package com.depromeet.deprocheck.deprocheckapi.aop;
 
-import com.depromeet.deprocheck.deprocheckapi.exception.BadRequestException;
-import com.depromeet.deprocheck.deprocheckapi.exception.ForbiddenException;
-import com.depromeet.deprocheck.deprocheckapi.exception.NotFoundException;
-import com.depromeet.deprocheck.deprocheckapi.exception.UnauthorizedException;
+import com.depromeet.deprocheck.deprocheckapi.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +11,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 @ControllerAdvice
 public class ApiControllerAdvice {
+
+    @ExceptionHandler(NoContentException.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void handleNoContentException(NoContentException ex) {
+        log.warn("NoContentException", ex);
+    }
 
     @ExceptionHandler(BadRequestException.class)
     @ResponseBody
