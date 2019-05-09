@@ -1,12 +1,15 @@
 package com.depromeet.deprocheck.deprocheckapi.domain;
 
-import lombok.Value;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-@Value(staticConstructor = "of")
+@Getter
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GeoLocation {
     /**
      * 위도
@@ -18,4 +21,11 @@ public class GeoLocation {
      */
     @Column
     private Double longitude;
+
+    public static GeoLocation of(Double latitude, Double longitude) {
+        GeoLocation geoLocation = new GeoLocation();
+        geoLocation.latitude = latitude;
+        geoLocation.longitude = longitude;
+        return geoLocation;
+    }
 }
