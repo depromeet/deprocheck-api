@@ -62,6 +62,7 @@ public class AdminController {
         httpSession = request.getSession(true);
         httpSession.setAttribute("id", member.getId());
         httpSession.setAttribute("name", member.getName());
+        httpSession.setAttribute("authority", member.getAuthority());
         return member.getName();
     }
 
