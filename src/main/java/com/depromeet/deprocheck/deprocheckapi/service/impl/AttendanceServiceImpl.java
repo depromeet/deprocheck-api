@@ -38,8 +38,8 @@ public class AttendanceServiceImpl implements AttendanceService {
         double distance = DistanceUtils.getDistance(
                 attendanceValue.getLatitude(),
                 attendanceValue.getLongitude(),
-                session.getLatitude(),
-                session.getLongitude()
+                session.getGeoLocation().getLatitude(),
+                session.getGeoLocation().getLongitude()
         );
 
         if (distance > MAX_DISTANCE) {

@@ -1,11 +1,14 @@
 package com.depromeet.deprocheck.deprocheckapi.service.impl;
 
+import com.depromeet.deprocheck.deprocheckapi.domain.GeoLocation;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
+import com.depromeet.deprocheck.deprocheckapi.dto.SessionCreateRequest;
 import com.depromeet.deprocheck.deprocheckapi.repository.SessionRepository;
 import com.depromeet.deprocheck.deprocheckapi.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -16,8 +19,22 @@ public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
 
     @Override
-    public Session createSession() {
-        return null;
+    @Transactional
+    public Session createSession(SessionCreateRequest sessionCreateRequest) {
+        // 유효성 검사
+        Assert.notNull(sessionCreateRequest, "'sessionCreateRequest' must not be null");
+
+        Session session = new Session();
+        session.setAddress(sessionCreateRequest.getAddress());
+        session.setName(sessionCreateRequest.getName());
+        session.setDate(sessionCreateRequest.getDate());
+        session.setFromAt(sessionCreateRequest.getFrom());
+        session.setToAt(sessionCreateRequest.getTo());
+        session.setGeoLocation(GeoLocation.of(
+                sessionCreateRequest.getLatitude(),
+                sessionCreateRequest.getLongitude()
+        ));
+        return sessionRepository.save(session);
     }
 
     /**

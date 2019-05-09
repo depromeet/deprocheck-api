@@ -29,13 +29,10 @@ public class Session {
      */
     private String address;
     /**
-     * 위도
+     * 위도, 경도
      */
-    private Double latitude;
-    /**
-     * 경도
-     */
-    private Double longitude;
+    @Embedded
+    private GeoLocation geoLocation;
     /**
      * 날짜
      */

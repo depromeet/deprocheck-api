@@ -2,6 +2,7 @@ package com.depromeet.deprocheck.deprocheckapi.controller;
 
 import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
 import com.depromeet.deprocheck.deprocheckapi.domain.Member;
+import com.depromeet.deprocheck.deprocheckapi.domain.Session;
 import com.depromeet.deprocheck.deprocheckapi.dto.LoginRequest;
 import com.depromeet.deprocheck.deprocheckapi.dto.MemberResponse;
 import com.depromeet.deprocheck.deprocheckapi.dto.SessionCreateRequest;
@@ -11,6 +12,7 @@ import com.depromeet.deprocheck.deprocheckapi.exception.ForbiddenException;
 import com.depromeet.deprocheck.deprocheckapi.exception.UnauthorizedException;
 import com.depromeet.deprocheck.deprocheckapi.service.LoginService;
 import com.depromeet.deprocheck.deprocheckapi.service.MemberService;
+import com.depromeet.deprocheck.deprocheckapi.service.SessionService;
 import com.depromeet.deprocheck.deprocheckapi.utils.SessionUtils;
 import com.depromeet.deprocheck.deprocheckapi.vo.LoginValue;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class AdminController {
 
     private final MemberService memberService;
     private final LoginService loginService;
+    private final SessionService sessionService;
 
     /**
      * 관리자 로그인 (이름 필드에 특정 비밀번호를 저장합니다)
@@ -71,9 +74,8 @@ public class AdminController {
                                          HttpServletRequest request) {
         checkAuthority(request);
 
-        // TODO: 세션 정보 생성
-
-        return null;
+        final Session session = sessionService.createSession(sessionCreateRequest);
+        return SessionResponse.from(session);
     }
 
     /**
