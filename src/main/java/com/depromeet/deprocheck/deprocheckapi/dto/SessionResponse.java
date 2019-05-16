@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @ToString
@@ -26,17 +26,17 @@ public class SessionResponse {
      * 날짜
      */
     @JsonFormat(shape = JsonFormat.Shape.NUMBER, timezone = "GMT+09:00")
-    private ZonedDateTime date;
+    private LocalDateTime date;
     /**
      * 시작 시간
      */
     @JsonFormat(shape = JsonFormat.Shape.NUMBER, timezone = "GMT+09:00")
-    private ZonedDateTime from;
+    private LocalDateTime from;
     /**
      * 끝나는 시간
      */
     @JsonFormat(shape = JsonFormat.Shape.NUMBER, timezone = "GMT+09:00")
-    private ZonedDateTime to;
+    private LocalDateTime to;
 
     public static SessionResponse from(Session session) {
         return new SessionResponse(
