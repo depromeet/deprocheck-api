@@ -2,7 +2,7 @@ package com.depromeet.deprocheck.deprocheckapi.vo;
 
 import lombok.Value;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Value
 public class SessionValue {
@@ -13,13 +13,13 @@ public class SessionValue {
     /**
      * 세션 날짜
      */
-    private final ZonedDateTime date;
+    private final LocalDateTime date;
     /**
      * 세션 시작 시간
      */
-    private final ZonedDateTime from;
+    private final LocalDateTime from;
     /**
      * 세션 끝 시간
      */
-    private final ZonedDateTime to;
+    private final LocalDateTime to;
 }

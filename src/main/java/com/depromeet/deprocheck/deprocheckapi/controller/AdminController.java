@@ -1,28 +1,25 @@
 package com.depromeet.deprocheck.deprocheckapi.controller;
 
+import com.depromeet.deprocheck.deprocheckapi.component.JwtFactory;
 import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
 import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
-import com.depromeet.deprocheck.deprocheckapi.dto.LoginRequest;
-import com.depromeet.deprocheck.deprocheckapi.dto.MemberResponse;
-import com.depromeet.deprocheck.deprocheckapi.dto.SessionCreateRequest;
-import com.depromeet.deprocheck.deprocheckapi.dto.SessionResponse;
+import com.depromeet.deprocheck.deprocheckapi.dto.*;
 import com.depromeet.deprocheck.deprocheckapi.dto.admin.AdminAttendanceResponse;
-import com.depromeet.deprocheck.deprocheckapi.exception.ForbiddenException;
 import com.depromeet.deprocheck.deprocheckapi.exception.UnauthorizedException;
 import com.depromeet.deprocheck.deprocheckapi.service.LoginService;
 import com.depromeet.deprocheck.deprocheckapi.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.service.SessionService;
-import com.depromeet.deprocheck.deprocheckapi.utils.SessionUtils;
 import com.depromeet.deprocheck.deprocheckapi.vo.LoginValue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,29 +38,26 @@ public class AdminController {
     private final MemberService memberService;
     private final LoginService loginService;
     private final SessionService sessionService;
+    private final JwtFactory jwtFactory;
 
     /**
      * 관리자 로그인 (이름 필드에 특정 비밀번호를 저장합니다)
      */
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest,
-                        HttpServletRequest request) {
-        // 로그인되어있으면 지나가기
-        HttpSession httpSession = request.getSession(false);
-        if (httpSession != null) {
-            httpSession.getAttribute("name");
+    public LoginResponse login(@RequestBody LoginRequest loginRequest,
+                               HttpServletRequest request) {
+        final String adminName = (String) request.getAttribute("name");
+        if (!StringUtils.isEmpty(adminName)) {
+            String accessToken = jwtFactory.generateToken(adminName);
+            return LoginResponse.from(accessToken);
         }
-
-        LoginValue loginValue = LoginValue.of(
+        final LoginValue loginValue = LoginValue.of(
                 loginRequest.getName(),
                 Authority.ADMIN
         );
-        Member member = loginService.login(loginValue);
-        httpSession = request.getSession(true);
-        httpSession.setAttribute("id", member.getId());
-        httpSession.setAttribute("name", member.getName());
-        httpSession.setAttribute("authority", member.getAuthority());
-        return member.getName();
+        final Member member = loginService.login(loginValue);
+        String accessToken = jwtFactory.generateToken(member.getName());
+        return LoginResponse.from(accessToken);
     }
 
     /**
@@ -123,12 +117,21 @@ public class AdminController {
     // TODO: 관리자 비밀번호 변경 기능 추가
 
     /**
-     * 세션이 존재하고, 관리자 권한을 가졌는지 검사합니다.
+     * 회원이 존재하고, 관리자 권한을 가졌는지 검사합니다.
      */
     private void checkAuthority(HttpServletRequest request) {
-        SessionUtils.getMemberName(request).orElseThrow(UnauthorizedException::new);
-        if (!SessionUtils.isAdmin(request)) {
-            throw new ForbiddenException();
+        Assert.notNull(request, "'request' must not be null");
+
+        final String name = (String) request.getAttribute("name");
+        if (StringUtils.isEmpty(name)) {
+            throw new UnauthorizedException();
+        }
+        final Member member = memberService.getMemberByName(name);
+        if (member == null) {
+            throw new UnauthorizedException("회원이 존재하지 않습니다. 이름:" + name);
+        }
+        if (Authority.ADMIN != member.getAuthority()) {
+            throw new UnauthorizedException("관리자 권한이 없습니다. 이름:" + name);
         }
     }
 }

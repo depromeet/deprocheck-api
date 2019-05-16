@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @ToString
@@ -14,7 +14,7 @@ public class AdminAttendanceResponse {
     private Integer id;
 
     @JsonFormat(shape = JsonFormat.Shape.NUMBER, timezone = "GMT+09:00")
-    private ZonedDateTime createdAt;
+    private LocalDateTime createdAt;
     /**
      * 출석한 회원의 정보
      */

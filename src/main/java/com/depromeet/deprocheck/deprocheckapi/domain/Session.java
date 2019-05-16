@@ -38,17 +38,17 @@ public class Session {
     /**
      * 날짜
      */
-    private ZonedDateTime date;
+    private LocalDateTime date;
     /**
      * 시작 시간
      */
     @Column(name = "from_at")
-    private ZonedDateTime fromAt;
+    private LocalDateTime fromAt;
     /**
      * 끝나는 시간
      */
     @Column(name = "to_at")
-    private ZonedDateTime toAt;
+    private LocalDateTime toAt;
     /**
      * 생성 시간
      */

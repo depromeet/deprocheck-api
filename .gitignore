@@ -142,5 +142,6 @@ target/
 application-local.properties
 application-dev.properties
 application-real.properties
+jwt.properties
 
 # End of https://www.gitignore.io/api/macos,windows,intellij+iml
