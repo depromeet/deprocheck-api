@@ -3,6 +3,7 @@ package com.depromeet.deprocheck.deprocheckapi.service.impl;
 import com.depromeet.deprocheck.deprocheckapi.domain.GeoLocation;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
 import com.depromeet.deprocheck.deprocheckapi.dto.SessionCreateRequest;
+import com.depromeet.deprocheck.deprocheckapi.dto.SessionResponse;
 import com.depromeet.deprocheck.deprocheckapi.repository.SessionRepository;
 import com.depromeet.deprocheck.deprocheckapi.service.SessionService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +48,14 @@ public class SessionServiceImpl implements SessionService {
     public Optional<Session> getCurrentSession() {
         LocalDateTime now = LocalDateTime.now();
         return sessionRepository.findByFromAtLessThanAndToAtGreaterThan(now, now);
+    }
+
+    @Override
+    @Transactional
+    public List<SessionResponse> getAllSessions() {
+        return sessionRepository.findAll()
+                .stream()
+                .map(SessionResponse::from)
+                .collect(Collectors.toList());
     }
 }
