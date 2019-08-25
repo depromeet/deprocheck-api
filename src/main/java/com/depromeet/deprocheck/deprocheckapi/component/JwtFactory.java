@@ -31,7 +31,7 @@ public class JwtFactory {
 
         token = JWT.create()
                 .withIssuer(tokenIssuer)
-                .withClaim("name", name)
+                .withClaim(NAME, name)
                 .sign(Algorithm.HMAC256(tokenSigningKey));
         log.info("token -- " + token);
         return token;

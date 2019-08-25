@@ -46,7 +46,7 @@ public class MemberController {
     public LoginResponse loginMember(@RequestBody LoginRequest loginRequest,
                                      HttpServletRequest request) {
         String memberName = (String) request.getAttribute("name");
-        if (StringUtils.isEmpty(memberName)) {
+        if (!StringUtils.isEmpty(memberName)) {
             String accessToken = jwtFactory.generateToken(memberName);
             return LoginResponse.from(accessToken);
         }
