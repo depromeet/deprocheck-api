@@ -11,6 +11,8 @@ import com.depromeet.deprocheck.deprocheckapi.service.LoginService;
 import com.depromeet.deprocheck.deprocheckapi.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.service.SessionService;
 import com.depromeet.deprocheck.deprocheckapi.vo.LoginValue;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 /**
  * 관리자가 사용할 수 있는 api 입니다
  */
+@Api(value = "관리자 기능", description = "관리자만 사용할 수 있는 요청입니다. 인증이 필요합니다. ")
 @CrossOrigin(origins = {
         "http://localhost:3000",
         "https://check.depromeet.com"
@@ -45,6 +48,7 @@ public class AdminController {
     /**
      * 관리자 로그인 (이름 필드에 특정 비밀번호를 저장합니다)
      */
+    @ApiOperation("멤버 이름을 입력해서 로그인합니다. 인증이 필요하지 않은 요청입니다. ")
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest,
                                HttpServletRequest request) {
@@ -65,6 +69,7 @@ public class AdminController {
     /**
      * 세션 정보를 생성합니다
      */
+    @ApiOperation("세션을 생성합니다.")
     @PostMapping("/sessions")
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponse createSession(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
@@ -80,6 +85,7 @@ public class AdminController {
     /**
      * 출석 정보를 조회합니다.
      */
+    @ApiOperation("출석 정보를 조회합니다. (아직 구현되지 않았습니다)")
     @GetMapping("/attendances")
     public List<AdminAttendanceResponse> getAttendances(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                                         @RequestHeader(name = "Authorization") String authorization,
@@ -95,6 +101,7 @@ public class AdminController {
     /**
      * 회원을 추가합니다.
      */
+    @ApiOperation("회원을 생성합니다. (아직 구현되지 않았습니다)")
     @PostMapping("/members")
     public MemberResponse createMember(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                        @RequestHeader(name = "Authorization") String authorization,
@@ -109,6 +116,7 @@ public class AdminController {
     /**
      * 회원 정보를 조회합니다.
      */
+    @ApiOperation("회원 목록을 조회합니다.")
     @GetMapping("/members")
     public List<MemberResponse> getMembers(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                            @RequestHeader(name = "Authorization") String authorization,
