@@ -21,11 +21,17 @@ public class MemberResponse {
      */
     private JobGroup jobGroup;
 
+    /**
+     * 이름
+     */
+    private String name;
+
     public static MemberResponse from(Member member) {
         return new MemberResponse(
                 member.getId(),
                 member.getTermNumber(),
-                member.getJobGroup()
+                member.getJobGroup(),
+                member.getName()
         );
     }
 }
