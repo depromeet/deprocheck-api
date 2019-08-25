@@ -12,10 +12,10 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:jwt.properties")
 public class JwtConfig {
 
-    @Value("${jwt.tokenIssuer}")
+    @Value("${jwt.tokenIssuer:tokenIssuer}")
     private String tokenIssuer;
 
-    @Value("${jwt.tokenSigningKey}")
+    @Value("${jwt.tokenSigningKey:tokenSigningKey}")
     private String tokenSigningKey;
 
     @Bean
