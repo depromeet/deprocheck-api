@@ -51,7 +51,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<SessionResponse> getAllSessions() {
         return sessionRepository.findAll()
                 .stream()
