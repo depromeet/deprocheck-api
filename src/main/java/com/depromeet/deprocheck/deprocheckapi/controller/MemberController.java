@@ -17,6 +17,7 @@ import com.depromeet.deprocheck.deprocheckapi.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.service.SessionService;
 import com.depromeet.deprocheck.deprocheckapi.vo.AttendanceValue;
 import com.depromeet.deprocheck.deprocheckapi.vo.LoginValue;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -67,7 +68,9 @@ public class MemberController {
      * - 거리가 너무 멀어서 출석 요청이 거절된 경우 403
      */
     @PostMapping("/members/me/attend")
-    public MemberAttendanceResponse attend(@RequestBody MemberAttendRequest memberAttendRequest,
+    public MemberAttendanceResponse attend(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
+                                           @RequestHeader(name = "Authorization") String authorization,
+                                           @RequestBody MemberAttendRequest memberAttendRequest,
                                            HttpServletRequest request) {
         checkAuthority(request);
 
@@ -85,7 +88,9 @@ public class MemberController {
     }
 
     @GetMapping("/members/me/attendances")
-    public List<MemberAttendanceResponse> getAttendances(@RequestParam(defaultValue = "0") Integer page,
+    public List<MemberAttendanceResponse> getAttendances(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
+                                                         @RequestHeader(name = "Authorization") String authorization,
+                                                         @RequestParam(defaultValue = "0") Integer page,
                                                          @RequestParam(defaultValue = "20") Integer size) {
         return Collections.emptyList();
     }

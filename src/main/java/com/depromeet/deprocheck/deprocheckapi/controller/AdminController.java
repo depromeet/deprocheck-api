@@ -11,6 +11,7 @@ import com.depromeet.deprocheck.deprocheckapi.service.LoginService;
 import com.depromeet.deprocheck.deprocheckapi.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.service.SessionService;
 import com.depromeet.deprocheck.deprocheckapi.vo.LoginValue;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -66,7 +67,9 @@ public class AdminController {
      */
     @PostMapping("/sessions")
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponse createSession(@RequestBody SessionCreateRequest sessionCreateRequest,
+    public SessionResponse createSession(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
+                                         @RequestHeader(name = "Authorization") String authorization,
+                                         @RequestBody SessionCreateRequest sessionCreateRequest,
                                          HttpServletRequest request) {
         checkAuthority(request);
 
@@ -78,7 +81,9 @@ public class AdminController {
      * 출석 정보를 조회합니다.
      */
     @GetMapping("/attendances")
-    public List<AdminAttendanceResponse> getAttendances(@RequestParam String date,
+    public List<AdminAttendanceResponse> getAttendances(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
+                                                        @RequestHeader(name = "Authorization") String authorization,
+                                                        @RequestParam String date,
                                                         HttpServletRequest request) {
         checkAuthority(request);
 
@@ -91,7 +96,9 @@ public class AdminController {
      * 회원을 추가합니다.
      */
     @PostMapping("/members")
-    public MemberResponse createMember(HttpServletRequest request) {
+    public MemberResponse createMember(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
+                                       @RequestHeader(name = "Authorization") String authorization,
+                                       HttpServletRequest request) {
         checkAuthority(request);
 
         // TODO: 회원 한 명 추가
@@ -103,7 +110,9 @@ public class AdminController {
      * 회원 정보를 조회합니다.
      */
     @GetMapping("/members")
-    public List<MemberResponse> getMembers(@RequestParam(defaultValue = "0") Integer page,
+    public List<MemberResponse> getMembers(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
+                                           @RequestHeader(name = "Authorization") String authorization,
+                                           @RequestParam(defaultValue = "0") Integer page,
                                            @RequestParam(defaultValue = "20") Integer size,
                                            HttpServletRequest request) {
         checkAuthority(request);
