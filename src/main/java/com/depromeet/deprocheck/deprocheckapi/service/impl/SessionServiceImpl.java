@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -43,7 +43,7 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Session> getCurrentSession() {
-        ZonedDateTime now = ZonedDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         return sessionRepository.findByFromAtLessThanAndToAtGreaterThan(now, now);
     }
 }
