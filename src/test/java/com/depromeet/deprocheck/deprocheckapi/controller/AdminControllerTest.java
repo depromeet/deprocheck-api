@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -47,7 +46,7 @@ public class AdminControllerTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    @MockBean
+    @SpyBean
     private JwtFactory jwtFactory;
 
     @Before
@@ -76,7 +75,7 @@ public class AdminControllerTest {
     @Test
     public void 세션_생성() throws Exception {
         // given
-        when(jwtFactory.getName(anyString())).thenReturn(Optional.of(ADMIN_NAME));
+        when(jwtFactory.getName("Bearer accessToken")).thenReturn(Optional.of(ADMIN_NAME));
         // when
         SessionCreateRequest sessionCreateRequest = this.createSessionCreateRequest(
                 "디캠프",
