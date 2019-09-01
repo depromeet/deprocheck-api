@@ -1,4 +1,4 @@
-package com.depromeet.deprocheck.deprocheckapi.aop;
+package com.depromeet.deprocheck.deprocheckapi.controller;
 
 import com.depromeet.deprocheck.deprocheckapi.exception.*;
 import lombok.extern.slf4j.Slf4j;
