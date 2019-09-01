@@ -2,7 +2,7 @@ package com.depromeet.deprocheck.deprocheckapi.infrastructure.config;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.depromeet.deprocheck.deprocheckapi.application.JwtFactory;
+import com.depromeet.deprocheck.deprocheckapi.infrastructure.auth.JwtFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

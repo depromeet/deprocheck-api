@@ -49,6 +49,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public Member getMemberById(Integer memberId) {
-        return memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
+        return memberRepository.findById(memberId)
+                .orElseThrow(NotFoundException::new);
     }
 }

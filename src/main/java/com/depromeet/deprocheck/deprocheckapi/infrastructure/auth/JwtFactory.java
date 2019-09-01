@@ -1,4 +1,4 @@
-package com.depromeet.deprocheck.deprocheckapi.application;
+package com.depromeet.deprocheck.deprocheckapi.infrastructure.auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -40,17 +40,17 @@ public class JwtFactory {
     /**
      * 인증 헤더에서 유저 이름을 추출합니다.
      */
-    public Optional<String> getName(String authorizationHeader) {
+    public Optional<Integer> getId(String authorizationHeader) {
         if (StringUtils.isEmpty(authorizationHeader)) {
             return Optional.empty();
         }
-        return decodeToken(authorizationHeader);
+        return this.decodeToken(authorizationHeader);
     }
 
-    private Optional<String> decodeToken(String header) {
+    private Optional<Integer> decodeToken(String header) {
         String token;
         try {
-            token = extractToken(header);
+            token = this.extractToken(header);
         } catch (IllegalArgumentException ex) {
             log.warn("Failed to extract token from header. header:" + header, ex);
             return Optional.empty();
@@ -69,7 +69,7 @@ public class JwtFactory {
             log.warn("Failed to decode jwt token. header:" + header);
             return Optional.empty();
         }
-        return Optional.of(idClaim.asString());
+        return Optional.of(idClaim.asInt());
     }
 
     private String extractToken(String header) {

@@ -1,11 +1,11 @@
 package com.depromeet.deprocheck.deprocheckapi.ui.controller;
 
-import com.depromeet.deprocheck.deprocheckapi.application.JwtFactory;
 import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
 import com.depromeet.deprocheck.deprocheckapi.domain.JobGroup;
 import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.repository.MemberRepository;
 import com.depromeet.deprocheck.deprocheckapi.helper.TestHelper;
+import com.depromeet.deprocheck.deprocheckapi.infrastructure.auth.JwtFactory;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.LoginRequest;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.SessionCreateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -75,7 +75,7 @@ public class AdminControllerTest {
     @Test
     public void 세션_생성() throws Exception {
         // given
-        when(jwtFactory.getName("Bearer accessToken")).thenReturn(Optional.of(ADMIN_NAME));
+        when(jwtFactory.getId("Bearer accessToken")).thenReturn(Optional.of(1));
         // when
         SessionCreateRequest sessionCreateRequest = this.createSessionCreateRequest(
                 "디캠프",

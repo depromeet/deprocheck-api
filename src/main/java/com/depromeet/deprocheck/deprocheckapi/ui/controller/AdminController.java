@@ -1,6 +1,5 @@
 package com.depromeet.deprocheck.deprocheckapi.ui.controller;
 
-import com.depromeet.deprocheck.deprocheckapi.application.JwtFactory;
 import com.depromeet.deprocheck.deprocheckapi.application.assembler.MemberAssembler;
 import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
 import com.depromeet.deprocheck.deprocheckapi.domain.Member;
@@ -10,6 +9,7 @@ import com.depromeet.deprocheck.deprocheckapi.domain.service.LoginService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
 import com.depromeet.deprocheck.deprocheckapi.domain.vo.LoginValue;
+import com.depromeet.deprocheck.deprocheckapi.infrastructure.auth.JwtFactory;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.*;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.admin.AdminAttendanceResponse;
 import io.swagger.annotations.Api;
@@ -102,6 +102,7 @@ public class AdminController {
      */
     @ApiOperation("회원을 생성합니다. ")
     @PostMapping("/members")
+    @ResponseStatus(HttpStatus.CREATED)
     public MemberResponse createMember(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                        @RequestHeader(name = "Authorization") String authorization,
                                        @RequestBody MemberCreateRequest memberCreateRequest,
@@ -139,16 +140,16 @@ public class AdminController {
     private void checkAuthority(HttpServletRequest request) {
         Assert.notNull(request, "'request' must not be null");
 
-        final String name = (String) request.getAttribute("name");
-        if (StringUtils.isEmpty(name)) {
+        final Integer memberId = (Integer) request.getAttribute("id");
+        if (StringUtils.isEmpty(memberId)) {
             throw new UnauthorizedException();
         }
-        final Member member = memberService.getMemberByName(name);
+        final Member member = memberService.getMemberById(memberId);
         if (member == null) {
-            throw new UnauthorizedException("회원이 존재하지 않습니다. 이름:" + name);
+            throw new UnauthorizedException("회원이 존재하지 않습니다. memberId:" + memberId);
         }
         if (Authority.ADMIN != member.getAuthority()) {
-            throw new UnauthorizedException("관리자 권한이 없습니다. 이름:" + name);
+            throw new UnauthorizedException("관리자 권한이 없습니다. Member:" + member);
         }
     }
 }

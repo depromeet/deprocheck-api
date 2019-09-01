@@ -1,8 +1,8 @@
 package com.depromeet.deprocheck.deprocheckapi.ui.interceptor;
 
 
-import com.depromeet.deprocheck.deprocheckapi.application.JwtFactory;
-import com.depromeet.deprocheck.deprocheckapi.domain.exception.UnauthorizedException;
+import com.depromeet.deprocheck.deprocheckapi.application.auth.AuthorizationResult;
+import com.depromeet.deprocheck.deprocheckapi.application.auth.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -15,14 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    private final JwtFactory jwtFactory;
+    private static final String ID = "id";
+    private final AuthorizationService authorizationService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String token = request.getHeader(AUTHORIZATION_HEADER);
-        String name = jwtFactory.getName(token)
-                .orElseThrow(() -> new UnauthorizedException("토큰이 유효하지 않습니다."));
-        request.setAttribute("name", name);
+        String header = request.getHeader(AUTHORIZATION_HEADER);
+        AuthorizationResult result = authorizationService.authorize(header);
+        request.setAttribute(ID, result.getId());
         return super.preHandle(request, response, handler);
     }
 }

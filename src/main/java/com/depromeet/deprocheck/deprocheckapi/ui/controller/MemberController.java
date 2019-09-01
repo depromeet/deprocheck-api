@@ -1,6 +1,5 @@
 package com.depromeet.deprocheck.deprocheckapi.ui.controller;
 
-import com.depromeet.deprocheck.deprocheckapi.application.JwtFactory;
 import com.depromeet.deprocheck.deprocheckapi.application.assembler.MemberAssembler;
 import com.depromeet.deprocheck.deprocheckapi.domain.Attendance;
 import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
@@ -14,6 +13,7 @@ import com.depromeet.deprocheck.deprocheckapi.domain.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
 import com.depromeet.deprocheck.deprocheckapi.domain.vo.AttendanceValue;
 import com.depromeet.deprocheck.deprocheckapi.domain.vo.LoginValue;
+import com.depromeet.deprocheck.deprocheckapi.infrastructure.auth.JwtFactory;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.LoginRequest;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.LoginResponse;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.MemberAttendRequest;
@@ -125,13 +125,13 @@ public class MemberController {
     private void checkAuthority(HttpServletRequest request) {
         Assert.notNull(request, "'request' must not be null");
 
-        final String name = (String) request.getAttribute("name");
-        if (StringUtils.isEmpty(name)) {
+        final Integer memberId = (Integer) request.getAttribute("name");
+        if (StringUtils.isEmpty(memberId)) {
             throw new UnauthorizedException();
         }
-        final Member member = memberService.getMemberByName(name);
+        final Member member = memberService.getMemberById(memberId);
         if (member == null) {
-            throw new UnauthorizedException("회원이 존재하지 않습니다. 이름:" + name);
+            throw new UnauthorizedException("회원이 존재하지 않습니다. memberId:" + memberId);
         }
     }
 }
