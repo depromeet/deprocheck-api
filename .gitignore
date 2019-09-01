@@ -50,6 +50,10 @@ cmake-build-*/
 # IntelliJ
 out/
 
+# IntelliJ plugin
+# save actions
+.idea/saveactions_settings.xml
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
