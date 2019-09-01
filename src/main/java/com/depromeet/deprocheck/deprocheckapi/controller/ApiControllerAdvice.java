@@ -3,13 +3,12 @@ package com.depromeet.deprocheck.deprocheckapi.controller;
 import com.depromeet.deprocheck.deprocheckapi.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class ApiControllerAdvice {
 
     @ExceptionHandler(NoContentException.class)
@@ -19,7 +18,6 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleBadRequestException(BadRequestException ex) {
         log.warn("BadRequestException", ex);
@@ -27,7 +25,6 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public String handleUnauthorizedException(UnauthorizedException ex) {
         log.warn("UnauthorizedException", ex);
@@ -35,7 +32,6 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    @ResponseBody
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleForbiddenException(ForbiddenException ex) {
         log.warn("ForbiddenException", ex);
@@ -43,7 +39,6 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFoundException(NotFoundException ex) {
         log.warn("NotFoundException", ex);
@@ -51,7 +46,6 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(Exception ex) {
         log.error("Exception", ex);
