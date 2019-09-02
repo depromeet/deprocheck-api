@@ -16,7 +16,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFactory {
-    private static final String NAME = "name";
+    private static final String MEMBER_ID = "memberId";
     private static final String HEADER_PREFIX = "Bearer ";
 
     private final JWTVerifier jwtVerifier;
@@ -26,12 +26,12 @@ public class JwtFactory {
     /**
      * jwt 를 생성합니다.
      */
-    public String generateToken(String name) {
+    public String generateToken(Integer memberId) {
         String token;
 
         token = JWT.create()
                 .withIssuer(tokenIssuer)
-                .withClaim(NAME, name)
+                .withClaim(MEMBER_ID, memberId)
                 .sign(Algorithm.HMAC256(tokenSigningKey));
         log.info("token -- " + token);
         return token;
@@ -64,12 +64,12 @@ public class JwtFactory {
         }
 
         Map<String, Claim> claims = decodedJWT.getClaims();
-        Claim idClaim = claims.get(NAME);
+        Claim idClaim = claims.get(MEMBER_ID);
         if (idClaim == null) {
             log.warn("Failed to decode jwt token. header:" + header);
             return Optional.empty();
         }
-        return Optional.of(idClaim.asInt());
+        return Optional.ofNullable(idClaim.asInt());
     }
 
     private String extractToken(String header) {
