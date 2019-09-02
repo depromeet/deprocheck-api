@@ -61,6 +61,10 @@ public class Member {
         return member;
     }
 
+    public boolean isAdmin() {
+        return this.authority.isAdmin();
+    }
+
     private void validate() {
         if (StringUtils.isEmpty(this.name)) {
             throw new IllegalArgumentException("'name' must not be null or empty");

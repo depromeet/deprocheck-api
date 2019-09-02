@@ -6,7 +6,9 @@ import com.depromeet.deprocheck.deprocheckapi.domain.Session;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.BadRequestException;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.ForbiddenException;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.NoContentException;
+import com.depromeet.deprocheck.deprocheckapi.domain.exception.NotFoundException;
 import com.depromeet.deprocheck.deprocheckapi.domain.repository.AttendanceRepository;
+import com.depromeet.deprocheck.deprocheckapi.domain.repository.SessionRepository;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.AttendanceService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
@@ -18,15 +20,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService {
     private static final int MAX_DISTANCE = 500;
+
     private final SessionService sessionService;
     private final MemberService memberService;
     private final AttendanceRepository attendanceRepository;
+    private final SessionRepository sessionRepository;
 
     @Override
     @Transactional
@@ -71,5 +77,22 @@ public class AttendanceServiceImpl implements AttendanceService {
         Assert.notNull(memberId, "'memberId' must not be null");
 
         return attendanceRepository.findByMemberId(memberId, pageable).getContent();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Attendance> getAttendancesByDate(Integer memberId, LocalDate localDate) {
+        Assert.notNull(memberId, "'memberId' must not be null");
+        Assert.notNull(localDate, "'localDate' must not be null");
+
+        Member member = memberService.getMemberById(memberId);
+        if (!member.isAdmin()) {
+            throw new ForbiddenException("member must have admin authority. member:" + member);
+        }
+        LocalDateTime startedAt = localDate.atStartOfDay();
+        LocalDateTime endedAt = localDate.plusDays(1L).atStartOfDay();
+        Session session = sessionRepository.findByFromAtLessThanAndToAtGreaterThan(startedAt, endedAt)
+                .orElseThrow(() -> new NotFoundException("Session not found"));
+        return attendanceRepository.findBySessionId(session.getId());
     }
 }
