@@ -1,19 +1,19 @@
 package com.depromeet.deprocheck.deprocheckapi.ui.controller;
 
+import com.depromeet.deprocheck.deprocheckapi.application.assembler.AttendanceAssembler;
 import com.depromeet.deprocheck.deprocheckapi.application.assembler.MemberAssembler;
 import com.depromeet.deprocheck.deprocheckapi.application.assembler.SessionAssembler;
 import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
 import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
+import com.depromeet.deprocheck.deprocheckapi.domain.exception.ForbiddenException;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.NotFoundException;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.UnauthorizedException;
+import com.depromeet.deprocheck.deprocheckapi.domain.service.AttendanceService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
-import com.depromeet.deprocheck.deprocheckapi.ui.dto.MemberCreateRequest;
-import com.depromeet.deprocheck.deprocheckapi.ui.dto.MemberResponse;
-import com.depromeet.deprocheck.deprocheckapi.ui.dto.SessionCreateRequest;
-import com.depromeet.deprocheck.deprocheckapi.ui.dto.SessionResponse;
-import com.depromeet.deprocheck.deprocheckapi.ui.dto.admin.AdminAttendanceResponse;
+import com.depromeet.deprocheck.deprocheckapi.domain.utils.DateTimeUtils;
+import com.depromeet.deprocheck.deprocheckapi.ui.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,8 +24,6 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,8 +39,10 @@ public class AdminController {
 
     private final MemberService memberService;
     private final SessionService sessionService;
+    private final AttendanceService attendanceService;
     private final MemberAssembler memberAssembler;
     private final SessionAssembler sessionAssembler;
+    private final AttendanceAssembler attendanceAssembler;
 
     /**
      * 세션 정보를 생성합니다
@@ -65,15 +65,17 @@ public class AdminController {
      */
     @ApiOperation("출석 정보를 조회합니다. (아직 구현되지 않았습니다)")
     @GetMapping("/attendances")
-    public List<AdminAttendanceResponse> getAttendances(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
-                                                        @RequestHeader(name = "Authorization") String authorization,
-                                                        @ApiIgnore @RequestAttribute(name = "memberId") Integer memberId,
-                                                        @RequestParam String date) {
+    public List<SimpleAttendanceResponse> getAttendances(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
+                                                         @RequestHeader(name = "Authorization") String authorization,
+                                                         @ApiIgnore @RequestAttribute(name = "memberId") Integer memberId,
+                                                         @RequestParam String date) {
         this.checkAuthority(memberId);
 
-        // TODO: 세션별 출석 정보 조회
 
-        return Collections.emptyList();
+        return attendanceService.getAttendancesByDate(memberId, DateTimeUtils.parseDate(date))
+                .stream()
+                .map(attendanceAssembler::toSimpleAttendanceResponse)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -85,11 +87,10 @@ public class AdminController {
     public MemberResponse createMember(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                        @RequestHeader(name = "Authorization") String authorization,
                                        @ApiIgnore @RequestAttribute(name = "memberId") Integer memberId,
-                                       @RequestBody MemberCreateRequest memberCreateRequest,
-                                       HttpServletRequest request) {
+                                       @RequestBody MemberCreateRequest memberCreateRequest) {
         this.checkAuthority(memberId);
 
-        Member member = memberService.createMember(memberCreateRequest);
+        final Member member = memberService.createMember(memberCreateRequest);
         return memberAssembler.toMemberResponse(member);
     }
 
@@ -102,8 +103,7 @@ public class AdminController {
                                            @RequestHeader(name = "Authorization") String authorization,
                                            @ApiIgnore @RequestAttribute(name = "memberId") Integer memberId,
                                            @RequestParam(defaultValue = "0") Integer page,
-                                           @RequestParam(defaultValue = "20") Integer size,
-                                           HttpServletRequest request) {
+                                           @RequestParam(defaultValue = "20") Integer size) {
         this.checkAuthority(memberId);
 
         return memberService.getMembers(PageRequest.of(page, size))
@@ -123,7 +123,7 @@ public class AdminController {
         try {
             final Member member = memberService.getMemberById(memberId);
             if (Authority.ADMIN != member.getAuthority()) {
-                throw new UnauthorizedException("관리자 권한이 없습니다. Member:" + member);
+                throw new ForbiddenException("관리자 권한이 없습니다. Member:" + member);
             }
         } catch (NotFoundException ex) {
             throw new UnauthorizedException("회원이 존재하지 않습니다. memberId:" + memberId, ex);
