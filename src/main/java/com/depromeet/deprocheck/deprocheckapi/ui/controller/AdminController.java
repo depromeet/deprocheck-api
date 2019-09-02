@@ -5,6 +5,7 @@ import com.depromeet.deprocheck.deprocheckapi.application.assembler.SessionAssem
 import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
 import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
+import com.depromeet.deprocheck.deprocheckapi.domain.exception.ForbiddenException;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.NotFoundException;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.UnauthorizedException;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.MemberService;
@@ -123,7 +124,7 @@ public class AdminController {
         try {
             final Member member = memberService.getMemberById(memberId);
             if (Authority.ADMIN != member.getAuthority()) {
-                throw new UnauthorizedException("관리자 권한이 없습니다. Member:" + member);
+                throw new ForbiddenException("관리자 권한이 없습니다. Member:" + member);
             }
         } catch (NotFoundException ex) {
             throw new UnauthorizedException("회원이 존재하지 않습니다. memberId:" + memberId, ex);
