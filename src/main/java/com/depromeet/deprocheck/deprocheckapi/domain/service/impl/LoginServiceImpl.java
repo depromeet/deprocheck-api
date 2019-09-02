@@ -5,12 +5,10 @@ import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.UnauthorizedException;
 import com.depromeet.deprocheck.deprocheckapi.domain.repository.MemberRepository;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.LoginService;
-import com.depromeet.deprocheck.deprocheckapi.domain.vo.LoginValue;
 import com.depromeet.deprocheck.deprocheckapi.infrastructure.auth.JwtFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 @Service
 @RequiredArgsConstructor
@@ -18,24 +16,6 @@ public class LoginServiceImpl implements LoginService {
 
     private final MemberRepository memberRepository;
     private final JwtFactory jwtFactory;
-
-    @Override
-    @Transactional
-    public Member login(LoginValue loginValue) {
-        Assert.notNull(loginValue, "'loginValue' must not be null");
-
-        Authority authority = loginValue.getAuthority();
-        switch (authority) {
-            case ADMIN:
-                return loginAdmin(loginValue.getName());
-            case MEMBER:
-                return loginMember(loginValue.getName());
-            case LEAVER:
-            case UNKNOWN:
-            default:
-                throw new IllegalArgumentException("'authority' is not supported. authority:" + authority);
-        }
-    }
 
     @Override
     @Transactional(readOnly = true)
