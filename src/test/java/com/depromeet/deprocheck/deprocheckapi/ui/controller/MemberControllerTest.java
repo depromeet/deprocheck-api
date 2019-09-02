@@ -46,7 +46,7 @@ public class MemberControllerTest {
         memberRepository.save(member);
         // when
         LoginRequest loginRequest = TestHelper.createLoginRequest(MEMBER_NAME);
-        mockMvc.perform(post("/api/members/login")
+        mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 // then

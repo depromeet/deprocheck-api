@@ -5,4 +5,6 @@ import com.depromeet.deprocheck.deprocheckapi.domain.vo.LoginValue;
 
 public interface LoginService {
     Member login(LoginValue loginValue);
+
+    String login(String name);
 }

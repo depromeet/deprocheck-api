@@ -2,20 +2,14 @@ package com.depromeet.deprocheck.deprocheckapi.ui.controller;
 
 import com.depromeet.deprocheck.deprocheckapi.application.assembler.MemberAssembler;
 import com.depromeet.deprocheck.deprocheckapi.domain.Attendance;
-import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
 import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.BadRequestException;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.UnauthorizedException;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.AttendanceService;
-import com.depromeet.deprocheck.deprocheckapi.domain.service.LoginService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
 import com.depromeet.deprocheck.deprocheckapi.domain.vo.AttendanceValue;
-import com.depromeet.deprocheck.deprocheckapi.domain.vo.LoginValue;
-import com.depromeet.deprocheck.deprocheckapi.infrastructure.auth.JwtFactory;
-import com.depromeet.deprocheck.deprocheckapi.ui.dto.LoginRequest;
-import com.depromeet.deprocheck.deprocheckapi.ui.dto.LoginResponse;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.MemberAttendRequest;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.MemberResponse;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.member.MemberAttendanceResponse;
@@ -42,27 +36,7 @@ public class MemberController {
     private final AttendanceService attendanceService;
     private final MemberService memberService;
     private final SessionService sessionService;
-    private final LoginService loginService;
-    private final JwtFactory jwtFactory;
     private final MemberAssembler memberAssembler;
-
-    @ApiOperation("멤버 이름을 입력해서 로그인합니다. 인증이 필요하지 않은 요청입니다.")
-    @PostMapping("/members/login")
-    public LoginResponse loginMember(@RequestBody LoginRequest loginRequest,
-                                     HttpServletRequest request) {
-        String memberName = (String) request.getAttribute("name");
-        if (!StringUtils.isEmpty(memberName)) {
-            String accessToken = jwtFactory.generateToken(memberName);
-            return LoginResponse.from(accessToken);
-        }
-        LoginValue loginValue = LoginValue.of(
-                loginRequest.getName(),
-                Authority.MEMBER
-        );
-        Member member = loginService.login(loginValue);
-        String accessToken = jwtFactory.generateToken(member.getName());
-        return LoginResponse.from(accessToken);
-    }
 
     @ApiOperation("자기 자신의 정보를 조회합니다.")
     @GetMapping("/members/me")

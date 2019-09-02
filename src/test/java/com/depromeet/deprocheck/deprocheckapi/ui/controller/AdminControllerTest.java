@@ -64,7 +64,7 @@ public class AdminControllerTest {
         // given
         // when
         LoginRequest loginRequest = TestHelper.createLoginRequest("디프만");
-        mockMvc.perform(post("/api/admin/login")
+        mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 // then

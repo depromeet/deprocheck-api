@@ -5,12 +5,12 @@ import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
 import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.UnauthorizedException;
-import com.depromeet.deprocheck.deprocheckapi.domain.service.LoginService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
-import com.depromeet.deprocheck.deprocheckapi.domain.vo.LoginValue;
-import com.depromeet.deprocheck.deprocheckapi.infrastructure.auth.JwtFactory;
-import com.depromeet.deprocheck.deprocheckapi.ui.dto.*;
+import com.depromeet.deprocheck.deprocheckapi.ui.dto.MemberCreateRequest;
+import com.depromeet.deprocheck.deprocheckapi.ui.dto.MemberResponse;
+import com.depromeet.deprocheck.deprocheckapi.ui.dto.SessionCreateRequest;
+import com.depromeet.deprocheck.deprocheckapi.ui.dto.SessionResponse;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.admin.AdminAttendanceResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,31 +39,8 @@ import java.util.stream.Collectors;
 public class AdminController {
 
     private final MemberService memberService;
-    private final LoginService loginService;
     private final SessionService sessionService;
-    private final JwtFactory jwtFactory;
     private final MemberAssembler memberAssembler;
-
-    /**
-     * 관리자 로그인 (이름 필드에 특정 비밀번호를 저장합니다)
-     */
-    @ApiOperation("멤버 이름을 입력해서 로그인합니다. 인증이 필요하지 않은 요청입니다. ")
-    @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest loginRequest,
-                               HttpServletRequest request) {
-        final String adminName = (String) request.getAttribute("name");
-        if (!StringUtils.isEmpty(adminName)) {
-            String accessToken = jwtFactory.generateToken(adminName);
-            return LoginResponse.from(accessToken);
-        }
-        final LoginValue loginValue = LoginValue.of(
-                loginRequest.getName(),
-                Authority.ADMIN
-        );
-        final Member member = loginService.login(loginValue);
-        String accessToken = jwtFactory.generateToken(member.getName());
-        return LoginResponse.from(accessToken);
-    }
 
     /**
      * 세션 정보를 생성합니다
