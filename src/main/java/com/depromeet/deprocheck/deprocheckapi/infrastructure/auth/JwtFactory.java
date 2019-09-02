@@ -79,7 +79,7 @@ public class JwtFactory {
         if (header.length() < HEADER_PREFIX.length()) {
             throw new IllegalArgumentException("Authorization header size가 옳지 않습니다. header의 길이는 " + HEADER_PREFIX.length() + " 보다 크거나 같아야 합니다.");
         }
-        if (!header.startsWith(HEADER_PREFIX)) {
+        if (!HEADER_PREFIX.equalsIgnoreCase(header.substring(0, HEADER_PREFIX.length()))) {
             throw new IllegalArgumentException("올바른 header 형식이 아닙니다. " + HEADER_PREFIX + "로 시작해야 합니다. ");
         }
         return header.substring(HEADER_PREFIX.length());
