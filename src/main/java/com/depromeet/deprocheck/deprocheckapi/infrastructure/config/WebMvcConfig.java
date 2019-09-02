@@ -21,10 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 // health check
                 .excludePathPatterns("/api/monitor/l7check")
                 // login
-                .excludePathPatterns(
-                        "/api/members/login",
-                        "/api/admin/login"
-                );
+                .excludePathPatterns("/api/login");
     }
 
     @Override

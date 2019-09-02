@@ -5,32 +5,24 @@ import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.UnauthorizedException;
 import com.depromeet.deprocheck.deprocheckapi.domain.repository.MemberRepository;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.LoginService;
-import com.depromeet.deprocheck.deprocheckapi.domain.vo.LoginValue;
+import com.depromeet.deprocheck.deprocheckapi.infrastructure.auth.JwtFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {
 
     private final MemberRepository memberRepository;
+    private final JwtFactory jwtFactory;
 
     @Override
-    public Member login(LoginValue loginValue) {
-        Assert.notNull(loginValue, "'loginValue' must not be null");
-
-        Authority authority = loginValue.getAuthority();
-        switch (authority) {
-            case ADMIN:
-                return loginAdmin(loginValue.getName());
-            case MEMBER:
-                return loginMember(loginValue.getName());
-            case LEAVER:
-            case UNKNOWN:
-            default:
-                throw new IllegalArgumentException("'authority' is not supported. authority:" + authority);
-        }
+    @Transactional(readOnly = true)
+    public String login(String name) {
+        Member member = memberRepository.findByName(name)
+                .orElseThrow(() -> new UnauthorizedException("Member not found. name:" + name));
+        return jwtFactory.generateToken(member.getId());
     }
 
     private Member loginAdmin(String name) {

@@ -15,14 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String ID = "id";
+    private static final String MEMBER_ID = "memberId";
     private final AuthorizationService authorizationService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String header = request.getHeader(AUTHORIZATION_HEADER);
         AuthorizationResult result = authorizationService.authorize(header);
-        request.setAttribute(ID, result.getId());
+        request.setAttribute(MEMBER_ID, result.getId());
         return super.preHandle(request, response, handler);
     }
 }

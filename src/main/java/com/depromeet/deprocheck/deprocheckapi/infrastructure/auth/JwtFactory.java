@@ -16,7 +16,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFactory {
-    private static final String NAME = "name";
+    private static final String MEMBER_ID = "memberId";
     private static final String HEADER_PREFIX = "Bearer ";
 
     private final JWTVerifier jwtVerifier;
@@ -26,12 +26,12 @@ public class JwtFactory {
     /**
      * jwt 를 생성합니다.
      */
-    public String generateToken(String name) {
+    public String generateToken(Integer memberId) {
         String token;
 
         token = JWT.create()
                 .withIssuer(tokenIssuer)
-                .withClaim(NAME, name)
+                .withClaim(MEMBER_ID, memberId)
                 .sign(Algorithm.HMAC256(tokenSigningKey));
         log.info("token -- " + token);
         return token;
@@ -64,12 +64,12 @@ public class JwtFactory {
         }
 
         Map<String, Claim> claims = decodedJWT.getClaims();
-        Claim idClaim = claims.get(NAME);
+        Claim idClaim = claims.get(MEMBER_ID);
         if (idClaim == null) {
             log.warn("Failed to decode jwt token. header:" + header);
             return Optional.empty();
         }
-        return Optional.of(idClaim.asInt());
+        return Optional.ofNullable(idClaim.asInt());
     }
 
     private String extractToken(String header) {
@@ -79,7 +79,7 @@ public class JwtFactory {
         if (header.length() < HEADER_PREFIX.length()) {
             throw new IllegalArgumentException("Authorization header size가 옳지 않습니다. header의 길이는 " + HEADER_PREFIX.length() + " 보다 크거나 같아야 합니다.");
         }
-        if (!header.startsWith(HEADER_PREFIX)) {
+        if (!HEADER_PREFIX.equalsIgnoreCase(header.substring(0, HEADER_PREFIX.length()))) {
             throw new IllegalArgumentException("올바른 header 형식이 아닙니다. " + HEADER_PREFIX + "로 시작해야 합니다. ");
         }
         return header.substring(HEADER_PREFIX.length());
