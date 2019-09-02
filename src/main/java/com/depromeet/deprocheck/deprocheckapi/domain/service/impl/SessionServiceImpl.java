@@ -5,7 +5,6 @@ import com.depromeet.deprocheck.deprocheckapi.domain.Session;
 import com.depromeet.deprocheck.deprocheckapi.domain.repository.SessionRepository;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.SessionCreateRequest;
-import com.depromeet.deprocheck.deprocheckapi.ui.dto.SessionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,10 +51,9 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SessionResponse> getAllSessions() {
+    public List<Session> getAllSessions() {
         return sessionRepository.findAll()
                 .stream()
-                .map(SessionResponse::from)
                 .collect(Collectors.toList());
     }
 }

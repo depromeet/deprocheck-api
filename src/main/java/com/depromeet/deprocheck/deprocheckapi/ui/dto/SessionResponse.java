@@ -1,17 +1,11 @@
 package com.depromeet.deprocheck.deprocheckapi.ui.dto;
 
-import com.depromeet.deprocheck.deprocheckapi.domain.Session;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@ToString
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Data
 public class SessionResponse {
     private Integer id;
     /**
@@ -37,15 +31,4 @@ public class SessionResponse {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "GMT+09:00")
     private LocalDateTime to;
-
-    public static SessionResponse from(Session session) {
-        return new SessionResponse(
-                session.getId(),
-                session.getName(),
-                session.getAddress(),
-                session.getDate(),
-                session.getFromAt(),
-                session.getToAt()
-        );
-    }
 }

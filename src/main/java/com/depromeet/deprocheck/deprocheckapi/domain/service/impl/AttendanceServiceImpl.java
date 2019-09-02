@@ -13,9 +13,12 @@ import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
 import com.depromeet.deprocheck.deprocheckapi.domain.utils.DistanceUtils;
 import com.depromeet.deprocheck.deprocheckapi.domain.vo.AttendanceValue;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +63,13 @@ public class AttendanceServiceImpl implements AttendanceService {
         newAttendance.setSession(session);
         newAttendance.setMember(member);
         return attendanceRepository.save(newAttendance);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Attendance> getAttendances(Integer memberId, Pageable pageable) {
+        Assert.notNull(memberId, "'memberId' must not be null");
+
+        return attendanceRepository.findByMemberId(memberId, pageable).getContent();
     }
 }
