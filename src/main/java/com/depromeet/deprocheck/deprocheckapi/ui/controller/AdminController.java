@@ -63,7 +63,7 @@ public class AdminController {
     /**
      * 출석 정보를 조회합니다.
      */
-    @ApiOperation("출석 정보를 조회합니다. (아직 구현되지 않았습니다)")
+    @ApiOperation("출석 정보를 조회합니다.")
     @GetMapping("/attendances")
     public List<SimpleAttendanceResponse> getAttendances(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                                          @RequestHeader(name = "Authorization") String authorization,
