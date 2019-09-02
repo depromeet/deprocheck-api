@@ -1,9 +1,11 @@
 package com.depromeet.deprocheck.deprocheckapi.ui.controller;
 
 import com.depromeet.deprocheck.deprocheckapi.application.assembler.MemberAssembler;
+import com.depromeet.deprocheck.deprocheckapi.application.assembler.SessionAssembler;
 import com.depromeet.deprocheck.deprocheckapi.domain.Authority;
 import com.depromeet.deprocheck.deprocheckapi.domain.Member;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
+import com.depromeet.deprocheck.deprocheckapi.domain.exception.NotFoundException;
 import com.depromeet.deprocheck.deprocheckapi.domain.exception.UnauthorizedException;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.MemberService;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
@@ -17,11 +19,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -41,6 +42,7 @@ public class AdminController {
     private final MemberService memberService;
     private final SessionService sessionService;
     private final MemberAssembler memberAssembler;
+    private final SessionAssembler sessionAssembler;
 
     /**
      * 세션 정보를 생성합니다
@@ -50,12 +52,12 @@ public class AdminController {
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponse createSession(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                          @RequestHeader(name = "Authorization") String authorization,
-                                         @RequestBody SessionCreateRequest sessionCreateRequest,
-                                         HttpServletRequest request) {
-        checkAuthority(request);
+                                         @ApiIgnore @RequestAttribute(name = "memberId") Integer memberId,
+                                         @RequestBody SessionCreateRequest sessionCreateRequest) {
+        this.checkAuthority(memberId);
 
         final Session session = sessionService.createSession(sessionCreateRequest);
-        return SessionResponse.from(session);
+        return sessionAssembler.toSessionResponse(session);
     }
 
     /**
@@ -65,9 +67,9 @@ public class AdminController {
     @GetMapping("/attendances")
     public List<AdminAttendanceResponse> getAttendances(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                                         @RequestHeader(name = "Authorization") String authorization,
-                                                        @RequestParam String date,
-                                                        HttpServletRequest request) {
-        checkAuthority(request);
+                                                        @ApiIgnore @RequestAttribute(name = "memberId") Integer memberId,
+                                                        @RequestParam String date) {
+        this.checkAuthority(memberId);
 
         // TODO: 세션별 출석 정보 조회
 
@@ -82,9 +84,10 @@ public class AdminController {
     @ResponseStatus(HttpStatus.CREATED)
     public MemberResponse createMember(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                        @RequestHeader(name = "Authorization") String authorization,
+                                       @ApiIgnore @RequestAttribute(name = "memberId") Integer memberId,
                                        @RequestBody MemberCreateRequest memberCreateRequest,
                                        HttpServletRequest request) {
-        this.checkAuthority(request);
+        this.checkAuthority(memberId);
 
         Member member = memberService.createMember(memberCreateRequest);
         return memberAssembler.toMemberResponse(member);
@@ -97,13 +100,13 @@ public class AdminController {
     @GetMapping("/members")
     public List<MemberResponse> getMembers(@ApiParam(name = "Authorization", value = "Bearer {accessToken}", required = true)
                                            @RequestHeader(name = "Authorization") String authorization,
+                                           @ApiIgnore @RequestAttribute(name = "memberId") Integer memberId,
                                            @RequestParam(defaultValue = "0") Integer page,
                                            @RequestParam(defaultValue = "20") Integer size,
                                            HttpServletRequest request) {
-        checkAuthority(request);
+        this.checkAuthority(memberId);
 
-        Pageable pageable = PageRequest.of(page, size);
-        return memberService.getMembers(pageable)
+        return memberService.getMembers(PageRequest.of(page, size))
                 .stream()
                 .map(memberAssembler::toMemberResponse)
                 .collect(Collectors.toList());
@@ -114,19 +117,16 @@ public class AdminController {
     /**
      * 회원이 존재하고, 관리자 권한을 가졌는지 검사합니다.
      */
-    private void checkAuthority(HttpServletRequest request) {
-        Assert.notNull(request, "'request' must not be null");
+    private void checkAuthority(Integer memberId) {
+        Assert.notNull(memberId, "'memberId' must not be null");
 
-        final Integer memberId = (Integer) request.getAttribute("id");
-        if (StringUtils.isEmpty(memberId)) {
-            throw new UnauthorizedException();
-        }
-        final Member member = memberService.getMemberById(memberId);
-        if (member == null) {
-            throw new UnauthorizedException("회원이 존재하지 않습니다. memberId:" + memberId);
-        }
-        if (Authority.ADMIN != member.getAuthority()) {
-            throw new UnauthorizedException("관리자 권한이 없습니다. Member:" + member);
+        try {
+            final Member member = memberService.getMemberById(memberId);
+            if (Authority.ADMIN != member.getAuthority()) {
+                throw new UnauthorizedException("관리자 권한이 없습니다. Member:" + member);
+            }
+        } catch (NotFoundException ex) {
+            throw new UnauthorizedException("회원이 존재하지 않습니다. memberId:" + memberId, ex);
         }
     }
 }
