@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@Api(value = "로그인", description = "멤버 관련 요청입니다. 인증이 필요하지 않습니다.")
+@Api(value = "로그인", description = "로그인 요청입니다. 인증이 필요하지 않습니다.")
 @CrossOrigin(origins = {
         "http://localhost:3000",
         "https://check.depromeet.com"
