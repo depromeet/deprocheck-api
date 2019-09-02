@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface SessionRepository extends JpaRepository<Session, Integer> {
     Optional<Session> findByFromAtLessThanAndToAtGreaterThan(LocalDateTime fromAt, LocalDateTime toAt);
+
+    Optional<Session> findByDate(LocalDateTime localDateTime);
 }

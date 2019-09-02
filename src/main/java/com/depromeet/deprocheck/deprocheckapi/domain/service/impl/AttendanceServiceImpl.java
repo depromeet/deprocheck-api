@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -89,9 +88,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         if (!member.isAdmin()) {
             throw new ForbiddenException("member must have admin authority. member:" + member);
         }
-        LocalDateTime startedAt = localDate.atStartOfDay();
-        LocalDateTime endedAt = localDate.plusDays(1L).atStartOfDay();
-        Session session = sessionRepository.findByFromAtLessThanAndToAtGreaterThan(startedAt, endedAt)
+        Session session = sessionRepository.findByDate(localDate.atTime(0, 0))
                 .orElseThrow(() -> new NotFoundException("Session not found"));
         return attendanceRepository.findBySessionId(session.getId());
     }

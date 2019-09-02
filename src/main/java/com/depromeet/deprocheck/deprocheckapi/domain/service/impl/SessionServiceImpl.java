@@ -13,7 +13,6 @@ import org.springframework.util.Assert;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,8 +51,6 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional(readOnly = true)
     public List<Session> getAllSessions() {
-        return sessionRepository.findAll()
-                .stream()
-                .collect(Collectors.toList());
+        return sessionRepository.findAll();
     }
 }
