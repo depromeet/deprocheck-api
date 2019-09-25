@@ -28,7 +28,10 @@ public class SessionServiceImpl implements SessionService {
         Session session = new Session();
         session.setAddress(sessionCreateRequest.getAddress());
         session.setName(sessionCreateRequest.getName());
-        session.setDate(sessionCreateRequest.getDate());
+
+        LocalDateTime date = sessionCreateRequest.getDate();
+        session.setDate(LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), 0, 0));
+
         session.setFromAt(sessionCreateRequest.getFrom());
         session.setToAt(sessionCreateRequest.getTo());
         session.setGeoLocation(GeoLocation.of(
