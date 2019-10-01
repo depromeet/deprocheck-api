@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class AdminAttendanceResponse {
     private Integer id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "GMT+09:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime createdAt;
     /**
      * 출석한 회원의 정보

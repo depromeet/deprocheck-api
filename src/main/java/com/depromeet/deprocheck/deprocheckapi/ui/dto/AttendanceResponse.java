@@ -12,10 +12,10 @@ public class AttendanceResponse {
     private Integer id;
     @JsonProperty("session")
     private SessionResponse sessionResponse;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "GMT+09:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty("createdAt")
     private LocalDateTime createdAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "GMT+09:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty("updatedAt")
     private LocalDateTime updatedAt;
 }
