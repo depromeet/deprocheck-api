@@ -3,6 +3,7 @@ package com.depromeet.deprocheck.deprocheckapi.domain.utils;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,16 @@ public final class DateTimeUtils {
                 Integer.valueOf(matcher.group(1)),
                 Integer.valueOf(matcher.group(2)),
                 Integer.valueOf(matcher.group(3))
+        );
+    }
+
+    public static LocalDateTime getStartTimeOfDay(LocalDateTime localDateTime) {
+        return LocalDateTime.of(
+                localDateTime.getYear(),
+                localDateTime.getMonthValue(),
+                localDateTime.getDayOfMonth(),
+                0,
+                0
         );
     }
 }

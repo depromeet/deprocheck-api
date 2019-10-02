@@ -1,13 +1,11 @@
 package com.depromeet.deprocheck.deprocheckapi.ui.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@ToString
+@Data
 public class SessionCreateRequest {
     /**
      * 주소

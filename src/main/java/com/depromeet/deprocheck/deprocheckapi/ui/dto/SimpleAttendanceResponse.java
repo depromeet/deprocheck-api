@@ -1,5 +1,6 @@
 package com.depromeet.deprocheck.deprocheckapi.ui.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -12,7 +13,9 @@ public class SimpleAttendanceResponse {
     @JsonProperty("member")
     private MemberResponse memberResponse;
     @JsonProperty("createdAt")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime createdAt;
     @JsonProperty("updatedAt")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime updatedAt;
 }
