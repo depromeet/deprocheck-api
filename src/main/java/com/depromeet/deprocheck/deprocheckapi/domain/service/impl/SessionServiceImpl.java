@@ -2,8 +2,10 @@ package com.depromeet.deprocheck.deprocheckapi.domain.service.impl;
 
 import com.depromeet.deprocheck.deprocheckapi.domain.GeoLocation;
 import com.depromeet.deprocheck.deprocheckapi.domain.Session;
+import com.depromeet.deprocheck.deprocheckapi.domain.exception.BadRequestException;
 import com.depromeet.deprocheck.deprocheckapi.domain.repository.SessionRepository;
 import com.depromeet.deprocheck.deprocheckapi.domain.service.SessionService;
+import com.depromeet.deprocheck.deprocheckapi.domain.utils.DateTimeUtils;
 import com.depromeet.deprocheck.deprocheckapi.ui.dto.SessionCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,13 +27,15 @@ public class SessionServiceImpl implements SessionService {
         // 유효성 검사
         Assert.notNull(sessionCreateRequest, "'sessionCreateRequest' must not be null");
 
+        LocalDateTime date = DateTimeUtils.getStartTimeOfDay(sessionCreateRequest.getDate());
+        if (sessionRepository.findByDate(date).isPresent()) {
+            throw new BadRequestException("Failed to create session. Already exist session at date:" + date);
+        }
+
         Session session = new Session();
         session.setAddress(sessionCreateRequest.getAddress());
         session.setName(sessionCreateRequest.getName());
-
-        LocalDateTime date = sessionCreateRequest.getDate();
-        session.setDate(LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), 0, 0));
-
+        session.setDate(date);
         session.setFromAt(sessionCreateRequest.getFrom());
         session.setToAt(sessionCreateRequest.getTo());
         session.setGeoLocation(GeoLocation.of(
